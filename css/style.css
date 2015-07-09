@@ -1,0 +1,25 @@
+/* checkers by dave hemmer */
+
+body {
+	/*text-align: center;*/
+}
+img {
+	margin: 7px 0 0 -9px;
+}
+#game-board {
+	margin: auto auto;
+}
+.game-spot {
+	margin: 0 0 0 0;
+	width: 64px;
+	height: 64px;
+}
+.red-square {
+	background-color: red;
+}
+.blue-square {
+	background-color: blue;
+}
+.game-piece {
+	z-index: 999;
+}

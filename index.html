@@ -1,9 +1,114 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>wdi-checkers</title>
+	<title>Dave's Checkers</title>
+
+	<!-- bootstrap, jquery, jqueryui -->
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+
+	<script src="js/script.js"></script>
+	<link rel="stylesheet" href="css/style.css">
+
 </head>
 <body>
+<div class="container">
+	<h1>Dave's Checkers</h1>
+	<div id="game-board" class="col-md-6 col-md-offset-3">
+		<div class="row">
+			<div id="r0c0" class="col-xs-1 game-spot red-square"></div>
+			<div id="r0c1" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r0c2" class="col-xs-1 game-spot red-square"></div>
+			<div id="r0c3" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r0c4" class="col-xs-1 game-spot red-square"></div>
+			<div id="r0c5" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r0c6" class="col-xs-1 game-spot red-square"></div>
+			<div id="r0c7" class="col-xs-1 game-spot blue-square"></div>
+		</div>
+		<div class="row">
+			<div id="r1c0" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r1c1" class="col-xs-1 game-spot red-square"></div>
+			<div id="r1c2" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r1c3" class="col-xs-1 game-spot red-square"></div>
+			<div id="r1c4" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r1c5" class="col-xs-1 game-spot red-square"></div>
+			<div id="r1c6" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r1c7" class="col-xs-1 game-spot red-square"></div>
+		</div>
+		<div class="row">
+			<div id="r2c0" class="col-xs-1 game-spot red-square"></div>
+			<div id="r2c1" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r2c2" class="col-xs-1 game-spot red-square"></div>
+			<div id="r2c3" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r2c4" class="col-xs-1 game-spot red-square"></div>
+			<div id="r2c5" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r2c6" class="col-xs-1 game-spot red-square"></div>
+			<div id="r2c7" class="col-xs-1 game-spot blue-square"></div>
+		</div>
+		<div class="row">
+			<div id="r3c0" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r3c1" class="col-xs-1 game-spot red-square"></div>
+			<div id="r3c2" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r3c3" class="col-xs-1 game-spot red-square"></div>
+			<div id="r3c4" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r3c5" class="col-xs-1 game-spot red-square"></div>
+			<div id="r3c6" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r3c7" class="col-xs-1 game-spot red-square"></div>
+		</div>
+		<div class="row">
+			<div id="r4c0" class="col-xs-1 game-spot red-square"></div>
+			<div id="r4c1" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r4c2" class="col-xs-1 game-spot red-square"></div>
+			<div id="r4c3" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r4c4" class="col-xs-1 game-spot red-square"></div>
+			<div id="r4c5" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r4c6" class="col-xs-1 game-spot red-square"></div>
+			<div id="r4c7" class="col-xs-1 game-spot blue-square"></div>
+		</div>
+		<div class="row">
+			<div id="r5c0" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r5c1" class="col-xs-1 game-spot red-square"></div>
+			<div id="r5c2" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r5c3" class="col-xs-1 game-spot red-square"></div>
+			<div id="r5c4" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r5c5" class="col-xs-1 game-spot red-square"></div>
+			<div id="r5c6" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r5c7" class="col-xs-1 game-spot red-square"></div>
+		</div>
+		<div class="row">
+			<div id="r6c0" class="col-xs-1 game-spot red-square"></div>
+			<div id="r6c1" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r6c2" class="col-xs-1 game-spot red-square"></div>
+			<div id="r6c3" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r6c4" class="col-xs-1 game-spot red-square"></div>
+			<div id="r6c5" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r6c6" class="col-xs-1 game-spot red-square"></div>
+			<div id="r6c7" class="col-xs-1 game-spot blue-square"></div>
+		</div>
+		<div class="row">
+			<div id="r7c0" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r7c1" class="col-xs-1 game-spot red-square"></div>
+			<div id="r7c2" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r7c3" class="col-xs-1 game-spot red-square">
+				<img class="game-piece" src="white.png" width="50">
+			</div>
+			<div id="r7c4" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r7c5" class="col-xs-1 game-spot red-square">
+  			    <img class="game-piece" src="white.png" width="50">
+			</div>
+			<div id="r7c6" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r7c7" class="col-xs-1 game-spot red-square">
+  			    <img class="game-piece" src="white.png" width="50">
+  			</div>
+		</div>
+		
+	</div>
+	<!-- end of game board -->
 
+</div>  
+<!-- end of container -->
 </body>
 </html>

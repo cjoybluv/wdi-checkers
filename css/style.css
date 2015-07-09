@@ -19,7 +19,9 @@ img {
 }
 .blue-square {
 	background-color: blue;
+	cursor: not-allowed;	
 }
 .game-piece {
+	position: absolute;
 	z-index: 999;
 }

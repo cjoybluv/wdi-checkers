@@ -1,5 +1,9 @@
 /* checkers by dave hemmer */
 
+html,body{
+  -webkit-user-select: none;
+}
+
 body {
 	/*text-align: center;*/
 }

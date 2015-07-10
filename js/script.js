@@ -1,5 +1,9 @@
 // checkers by dave hemmer
 
+//   spotID = id of spot div;   = r#c# format  ex:  r4c5
+//   gpID   = id of game-piece img;  = gp[B|W]<xy>[K]  ex:  gpB45K, blck on 45 king
+
+
 $(function() {
 
 	var currentBoardPlayers = [];  // xy arr's row by col; start = 'init setup'
@@ -25,7 +29,7 @@ $(function() {
 	 			// console.log(row,col,player);
 	 		}
 	 	}
-	 	console.log(startBoard);
+	 	// console.log(startBoard);
 	 	return startBoard;
 	 };
 
@@ -36,6 +40,8 @@ $(function() {
 	 		for (var col = 0; col < 8; col++) {
 	 			if (currentBoardPlayers[row][col] !== '') {
 	 				currentBoardMovable[row][col] = pieceIsMovable(row,col);
+	 			} else {
+	 				currentBoardMovable[row][col] = '';
 	 			}
 	 		}
 	 	}
@@ -46,10 +52,18 @@ $(function() {
     	return "r" + gpID[3] + "c" + gpID[4];
     };
     var gpIDtoPlayer = function(gpID) {
-    	return gpID[2]
+    	console.log('gpIDtoPlayer',gpID);
+    	var player = gpID[2];
+    	if (gpID.length>5) {
+    		player += "K";
+    	}
+    	return player;
+    };
+    var gpIDtoXY = function(gpID) {
+    	return gpID[3] + gpID[4]
     };
     var isKing = function(row,col) {
-    	console.log('isKing',currentBoardPlayers[row][col]);
+    	// console.log('isKing',currentBoardPlayers[row][col]);
     	return (currentBoardPlayers[row][col][1]==='K');
     };
     var setDirection = function(row,col) {
@@ -62,10 +76,17 @@ $(function() {
     	}
     };
     var spotXY = function(spotID) {
-    	return spotID[3]+spotID[4];
+    	return spotID[1]+spotID[3];   //  return xy in string
     };
     var xyToSpotID = function(xy) {
-    	return 'r' + xy[0] + 'c' + xy[1];
+    	return 'r' + xy[0] + 'c' + xy[1];  // xy in string > spotID
+    };
+    var xyToGpID = function(xy,player) {
+    	var king = '';
+    	if (player.length > 1) {
+    		king = 'K';
+    	}
+    	return 'gp' + player + xy + king;
     };
     var setAdjSpots =  function(row,col) {
     	var adjSpots = [];  // array of xy elements
@@ -124,7 +145,24 @@ $(function() {
 	 					$('#'+spotID).find('img').remove();
 	 					$('#'+spotID).append('<img id="gbW'+row+col+'K" class="game-piece draggable" src="white-king.png" width="50">');
 	 					break;
-	 			}		
+	 			}
+	 			// if (currentBoardPlayers[row][col][0] === currentPlayer && currentBoardMovable[row][col]) {
+	 			// 	var gpID = xyToGpID(row.toString()+col.toString(),currentBoardPlayers[row][col]);
+	 			// 	console.log('displayBoard: gpID', gpID);
+ 				//     $('#'+gpID).draggable({ 
+				 //    	containment: "#game-board", scroll: false, grid: [ 64, 64 ],
+				 //    	start: function(event,ui) {
+				 //    		var gpID = event.target.id;
+				 //    		var xy = gpIDtoXY(gpID);
+				 //    		var player = gpIDtoPlayer(gpID)
+				 //    		console.log('drag-start',gpID,xy);
+				 //    		if(player !== currentPlayer || !pieceIsMovable(xy[0],xy[1])) {
+				 //    			console.log('DRAG: invalid move')
+				 //    			// $(".game-piece").draggable('disable');
+				 //    		}
+				 //    	}
+				 //    });
+	 			// }		
 	 		};
 	 	};
 	 };
@@ -145,7 +183,7 @@ $(function() {
 		// }
 		currentDirection = setDirection(row,col);
 		var adjSpots = setAdjSpots(row,col);
-		console.log('adjSpots',adjSpots);
+		// console.log('adjSpots',adjSpots);
 
 		// var movable = false;
 		// console.log('In pieceIsMovable',gpID,currentPlayer);
@@ -168,7 +206,7 @@ $(function() {
 				}
 			}
 		}
-		console.log('movable',movable);
+		// console.log('movable',movable);
 		return movable;
 	};
 
@@ -183,33 +221,70 @@ $(function() {
 // MAINLINE
 // 
 	 	currentBoardPlayers = initStartBoard();
-	 	console.log('players',currentBoardPlayers);
+	 	// console.log('players',currentBoardPlayers);
 	 	setBoardMovable();
-	 	console.log('movable',currentBoardMovable);
+	 	// console.log('movable',currentBoardMovable);
 	 	displayBoard();
 
 
-    $( ".game-piece" ).draggable({ 
-    	containment: "#game-board", scroll: false, grid: [ 64, 64 ],
-    	start: function(event,ui) {
-    		var xy = spotXY(event.target.id);
-    		console.log('drag-start',event.target.id,xy);
-    		pieceIsMovable(xy[0],xy[1]);
-    	},
-    	stop: function(event,ui) {
-    		// console.log('drag-stop',event);
-    	}
+
+
+    $( ".game-spot" ).on('mouseenter','.game-piece', function(){
+    	$('.game-piece').draggable({
+	    	containment: "#game-board", scroll: false, grid: [ 70, 70 ]
+    	});
     });
+
+  //   delegate("img","mousedown",function(event) {
+  //   	$(this).draggable({
+	 //    	containment: "#game-board", scroll: false, grid: [ 64, 64 ],
+	 //    	start: function(event,ui) {
+	 //    		var gpID = event.target.id;
+	 //    		var xy = gpIDtoXY(gpID);
+	 //    		var player = gpIDtoPlayer(gpID)
+	 //    		console.log('drag-start',gpID,xy);
+	 //    		if(player !== currentPlayer || !pieceIsMovable(xy[0],xy[1])) {
+	 //    			console.log('DRAG: invalid move')
+	 //    			// $(".game-piece").draggable('disable');
+	 //    		}
+  //   		}
+		// })
+  //  	});
+
+
+    // $( ".game-piece" ).draggable({ 
+    // 	containment: "#game-board", scroll: false, grid: [ 64, 64 ],
+    // 	start: function(event,ui) {
+    // 		var gpID = event.target.id;
+    // 		var xy = gpIDtoXY(gpID);
+    // 		var player = gpIDtoPlayer(gpID)
+    // 		console.log('drag-start',gpID,xy);
+    // 		if(player !== currentPlayer || !pieceIsMovable(xy[0],xy[1])) {
+    // 			console.log('DRAG: invalid move')
+    // 			// $(".game-piece").draggable('disable');
+    // 		}
+    // 	}
+    // });
 
     $( ".game-spot" ).droppable({
       drop: function( event, ui ) {
-      	console.log(event.toElement.id);
-      	console.log(event.target.id);
-      	// console.log(event.target.id);
-        // $( this )
-        //   .addClass( "ui-state-highlight" )
-        //   .find( "p" )
-        //     .html( "Dropped!" );
+      	// update currentBoardPlayers
+		var xy = gpIDtoXY(event.toElement.id);  
+		var gpID = event.toElement.id;			// gbID
+		var spotID = event.target.id;			// target spot id
+      	console.log("drop: toElement.id", gpID);  
+      	console.log("drop: target.id", spotID);		
+      	if (currentBoardMovable[gpID[3]][gpID[4]] && currentPlayer===gpID[2]) {
+	      	currentBoardPlayers[xy[0]][xy[1]] = '';   // clear orig spot
+	      	xy = spotXY(spotID);
+	      	currentBoardPlayers[xy[0]][xy[1]] = gpIDtoPlayer(gpID); // set new spot
+	    }
+      	// console.log('DROP: player',gpIDtoPlayer(gpID));
+      	setBoardMovable();
+      	displayBoard();
+      	console.log('DROP: new board:',currentBoardPlayers);
+      	console.log('DROP: new board movable:',currentBoardMovable);
+		// $(".game-piece").draggable('enable');
       }
     });
 

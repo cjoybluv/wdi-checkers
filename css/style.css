@@ -8,15 +8,15 @@ body {
 	/*text-align: center;*/
 }
 img {
-	margin: 7px 0 0 -9px;
+	margin: 8px 0 0 -7px;
 }
 #game-board {
 	margin: auto auto;
 }
 .game-spot {
 	margin: 0 0 0 0;
-	width: 64px;
-	height: 64px;
+	width: 70px;
+	height: 70px;
 }
 .red-square {
 	background-color: red;

@@ -8,7 +8,8 @@ $(function() {
 
 	var currentBoardPlayers = [];  // xy arr's row by col; start = 'init setup'
 	var currentBoardMovable = [];
-	var currentPlayer = 'W';
+	var currentPlayer = 'B';
+   	var currentOpponent = currentPlayer==='B' ? 'W' : 'B';
 	var currentDirection = '';  // '+' Down the board, '-' Up, 'K' King Up or Down, '' not set
  	var currentAvailableMoves = [];
 
@@ -35,27 +36,13 @@ $(function() {
 	 	return startBoard;
 	 };
 
-	 var setBoardMovable = function() {
-	 	currentBoardMovable = [];
-	 	var gp = '';
- 		for (var row = 0; row < 8; row++) {
-	 		currentBoardMovable[row] = [];
-	 		for (var col = 0; col < 8; col++) {
- 				gp = currentBoardPlayers[row][col];
-	 			if (gp !== '' && gp[0]===currentPlayer) {
-	 				currentBoardMovable[row][col] = pieceIsMovable(row,col);
-	 			} 
-	 		}
-	 	}
-	 };
-
 
 // CONVERSION UTILITES
     // var gpIDtoSpotID = function(gpID) {
     // 	return "r" + gpID[3] + "c" + gpID[4];
     // };
     var gpIDtoPlayer = function(gpID) {
-    	console.log('gpIDtoPlayer',gpID);
+    	// console.log('gpIDtoPlayer',gpID);
     	var player = gpID[2];
     	if (gpID.length>5) {
     		player += "K";
@@ -84,6 +71,11 @@ $(function() {
     var xyToSpotID = function(xy) {
     	return 'r' + xy[0] + 'c' + xy[1];  // xy in string > spotID
     };
+    var ob = function(num,dir) {
+    	var ob = false;
+    	if (num===0 && dir==='-') {ob=true;}
+    	if (num===7 && dir==='+') {ob=true;}
+    };
     // var xyToGpID = function(xy,player) {
     // 	var king = '';
     // 	if (player.length > 1) {
@@ -91,36 +83,132 @@ $(function() {
     // 	}
     // 	return 'gp' + player + xy + king;
     // };
+
+    var whoseSpot = function(spotXY) {
+    	return currentBoardPlayers[parseInt(spotXY[0])][parseInt(spotXY[1])];
+    };
+
     var setAdjSpots =  function(row,col) {
+    	var originXY = row.toString() + col.toString();
     	var adjSpots = [];  // array of xy str elements ['51','53']
     	switch (currentDirection) {
     		case '':
     			break;
 			case '+':    // black
-				adjSpots[0] = (row + 1).toString() + (col - 1).toString();
-				adjSpots[1] = (row + 1).toString() + (col + 1).toString();
+				if (!ob(row,'+') && !ob(col,'+')) {adjSpots.push((row + 1).toString() + (col + 1).toString())};
+				if (!ob(row,'+') && !ob(col,'-')) {adjSpots.push((row + 1).toString() + (col - 1).toString())};
 				break;
 			case '-':     // white
-				adjSpots[0] = (row - 1).toString() + (col - 1).toString();
-				adjSpots[1] = (row - 1).toString() + (col + 1).toString();
+				if (!ob(row,'-') && !ob(col,'+')) {adjSpots.push((row - 1).toString() + (col + 1).toString())};
+				if (!ob(row,'-') && !ob(col,'-')) {adjSpots.push((row - 1).toString() + (col - 1).toString())};
 				break;
 			case 'K':
-				adjSpots[0] = (row + 1).toString() + (col - 1).toString();
-				adjSpots[1] = (row + 1).toString() + (col + 1).toString();
-				adjSpots[2] = (row - 1).toString() + (col - 1).toString();
-				adjSpots[3] = (row - 1).toString() + (col + 1).toString();
+				if (!ob(row,'+') && !ob(col,'+')) {adjSpots.push((row + 1).toString() + (col + 1).toString())};
+				if (!ob(row,'+') && !ob(col,'-')) {adjSpots.push((row + 1).toString() + (col - 1).toString())};
+				if (!ob(row,'-') && !ob(col,'+')) {adjSpots.push((row - 1).toString() + (col + 1).toString())};
+				if (!ob(row,'-') && !ob(col,'-')) {adjSpots.push((row - 1).toString() + (col - 1).toString())};
 				break;
     	}
-    	adjSpots.forEach(function(spot) {
-			if ((spot[0]<0||spot>7)||spot[1]<0||spot[1]>7) {
-				return "offBoard"
-			} else {
-				return spot;
-			}
-    	});
+
+
+    	// console.log('PRE-checkOffBoard: adjSpots',adjSpots,row,col,currentDirection);
+
+    	var temp = adjSpots.map(checkOffBoard);
+    	adjSpots = temp;
+
+    	// console.log('PRE-JUMP: adjSpots',adjSpots);
+
+     	// check for JUMP possibilites here
+     	var jumpSpots = [];
+     	var jumpSpot = '';
+     	var spot = '';
+     	for (var i=0;i<adjSpots.length;i++) {
+     		jumpSpot='';
+     		spot = checkOffBoard(adjSpots[i]);
+     		if (spot !== 'offBoard') {
+     			if (whoseSpot(spot)===currentOpponent) {
+     				jumpSpot = jumpSpotXY(originXY,spot);
+     			}
+     		}
+     		if (jumpSpot !=='' && checkOffBoard(jumpSpot) !== 'offBoard' && whoseSpot(jumpSpot) === '')  {
+     			jumpSpots.push(jumpSpot);
+     		}
+     	}
+     	// END OF JUMP LOGIC
+     	if (jumpSpots) {
+     		adjSpots = adjSpots.concat(jumpSpots);
+     	}
+    	temp = adjSpots.map(checkOffBoard);
+    	adjSpots = temp;
+
+    	// console.log('POST Jump: adjSpots,row,col,dir',adjSpots,row,col,currentPlayer)
     	return adjSpots;
     };
 
+    var checkOffBoard = function(spot) {
+    	if (/[0-7][0-7]/.test(spot)) {
+		// if ((spot.lenghth>2||spot[0]<'0'||spot'7')||spot[1]<'0'||spot[1]>'7') {
+			return spot;
+		} else {
+			return 'offBoard';
+		}
+	};
+
+    var jumpSpotXY = function(originXY,targetXY) {
+    	// console.log('jumpSpotXY: Oxy Txy:',originXY,targetXY)
+    	var jumpX = targetXY[0]<originXY[0] ? parseInt(targetXY[0])-1 : parseInt(targetXY[0])+1;
+    	var jumpY = targetXY[[1]]<originXY[1] ? parseInt(targetXY[1])-1 : parseInt(targetXY[1])+1;
+   		return jumpX.toString() + jumpY.toString();
+    };
+
+    var distanceBetween = function(spotA,spotB) {
+    	var rdist = Math.abs(parseInt(spotA[0])-parseInt(spotB[0]));
+    	var cdist = Math.abs(parseInt(spotA[1])-parseInt(spotB[1]));
+    	return (rdist>cdist) ? rdist : cdist;
+    };
+
+    var spotBetweenXY = function(spotA,spotB) {
+    	var ar = parseInt(spotA[0]);
+    	var ac = parseInt(spotA[1]);
+    	var br = parseInt(spotB[0]);
+    	var bc = parseInt(spotB[1]);
+    	var r = ar > br ? ar-1 : br-1;
+    	var c = ac > bc ? ac-1 : bc-1;
+    	return r.toString() + c.toString();
+    }
+
+	var pieceIsMovable = function(row,col) {
+		var movable = false;
+		var moves = [];
+		currentDirection = setDirection(row,col);
+		var adjSpots = setAdjSpots(row,col);
+		// console.log('back from setAdjSpots',adjSpots,row,col);
+		for (var i = 0;i < adjSpots.length;i++) {
+			var adjSpot = adjSpots[i].toString();
+			if (adjSpot !== 'offBoard') {
+				if (currentBoardPlayers[adjSpot[0]][adjSpot[1]]==='') {
+					movable = true;
+					moves.push(adjSpots[i]);
+				}
+			}
+		}
+		currentAvailableMoves[row][col] = moves;
+		return movable;
+	};
+
+	 var setBoardMovable = function() {
+	 	currentBoardMovable = [];
+	 	var gp = '';
+ 		for (var row = 0; row < 8; row++) {
+	 		currentBoardMovable[row] = [];
+	 		for (var col = 0; col < 8; col++) {
+ 				gp = currentBoardPlayers[row][col];
+	 			if (gp !== '' && gp[0]===currentPlayer) {
+	 				currentBoardMovable[row][col] = pieceIsMovable(row,col);
+	 			} 
+	 		}
+	 	}
+	 };
 
 	 var displayBoard = function() {
 	 	// console.log(currentBoardPlayers[0][2]);
@@ -153,24 +241,11 @@ $(function() {
 	 	};
 	 };
 
-	var pieceIsMovable = function(row,col) {
-		var movable = false;
-		var moves = [];
-		currentDirection = setDirection(row,col);
-		var adjSpots = setAdjSpots(row,col);
-		for (var i = 0;i < adjSpots.length;i++) {
-			if (adjSpots[i] !== 'offBoard') {
-				if (currentBoardPlayers[adjSpots[i][0]][adjSpots[i][1]]==='') {
-					movable = true;
-					moves.push(adjSpots[i]);
-				}
-			}
-		}
-		currentAvailableMoves[row][col] = moves;
-		return movable;
+	var switchPlayer = function() {
+		currentPlayer = currentPlayer === 'B' ? 'W' : 'B';
+    	currentOpponent = currentPlayer==='B' ? 'W' : 'B';
+		console.log('player switched to',currentPlayer);
 	};
-
-
 
 
 
@@ -202,15 +277,29 @@ $(function() {
 		var xy = gpIDtoXY(gpID);  				// gpID as XY
 		var spotID = event.target.id;			// target spot id
 		var targetXY = spotXY(spotID);
-      	console.log("drop: toElement.id", gpID,xy);  
-      	console.log("drop: target.id", spotID);		
+      	// console.log("drop: toElement.id", gpID,xy);  
+      	// console.log("drop: target.id", spotID);		
       	if (currentBoardMovable[gpID[3]][gpID[4]] && currentPlayer===gpID[2]) {
       		if (currentAvailableMoves[gpID[3]][gpID[4]].indexOf(targetXY)>-1) {
+      			// check for jump here; if so; 1) pick-up jumped piece; 
+    			// 2) if another.jumpAvailable DO> same.player, only.that.piece
+    		    //   provide for stop-turn-buton?
+    		    console.log('distanceBetween',distanceBetween(xy,targetXY));
+    		    if (distanceBetween(xy,targetXY)===2) {
+    		    	// jump
+    		    	console.log('JUMP,JUMP,JUMP');
+    		    	xy = spotBetweenXY(xy,targetXY);
+    		    	// console.log('spotBetweenXY',spot);
+    		    	currentBoardPlayers[xy[0]][xy[1]] = '';   // capture piece	
+			      	currentBoardMovable[xy[0]][xy[1]] = '';
+			      	currentAvailableMoves[xy[0]][xy[1]] = '';
+    		    }
 		      	currentBoardPlayers[xy[0]][xy[1]] = '';   // clear orig spot
 		      	currentBoardMovable[xy[0]][xy[1]] = '';
 		      	currentAvailableMoves[xy[0]][xy[1]] = '';
 		      	xy = spotXY(spotID);
 		      	currentBoardPlayers[xy[0]][xy[1]] = gpIDtoPlayer(gpID); // set new spot
+		      	switchPlayer();
       		}
 	    }
       	// console.log('DROP: player',gpIDtoPlayer(gpID));

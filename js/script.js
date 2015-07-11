@@ -7,6 +7,7 @@
 $(function() {
 
 	var currentBoardPlayers = [];  // xy arr's row by col; start = 'init setup'
+									// values: B, W, BK, WK
 	var currentBoardMovable = [];
 	var currentPlayer = 'B';
    	var currentOpponent = currentPlayer==='B' ? 'W' : 'B';
@@ -296,7 +297,20 @@ $(function() {
       	console.log("drop: target.id", spotID);		
       	if (currentBoardMovable[gpID[3]][gpID[4]] && currentPlayer===gpID[2]) {
       		if (currentAvailableMoves[gpID[3]][gpID[4]].indexOf(targetXY)>-1) {
-		      	jumpingPieceXY = '';
+      			// kingMe??
+      			var kingMe = '';
+      			if (currentPlayer==='B' && parseInt(targetXY[0])===7) {
+      				kingMe = 'K';
+      			}
+      			if (currentPlayer==='W' && parseInt(targetXY[0])===0) {
+      				kingMe = 'K';
+      			}
+      			if (kingMe !== '') {
+      				console.log('KING ME!');
+      			}
+			// console.log('KING ME!',kingMe,'spotID',spotID);
+      			// reset jumpingPieceXY
+		      	if (jumpingPieceXY !=='') {jumpingPieceXY = '';}
       			// check for jump here; if so; 1) pick-up jumped piece; 
     			// 2) if another.jumpAvailable DO> same.player, only.that.piece
     		    //   provide for stop-turn-buton?
@@ -316,7 +330,7 @@ $(function() {
 			      	currentBoardMovable[xy[0]][xy[1]] = '';
 			      	currentAvailableMoves[xy[0]][xy[1]] = '';
 			      	xy = spotXY(spotID);
-			      	currentBoardPlayers[xy[0]][xy[1]] = gpIDtoPlayer(gpID); // set new spot
+			      	currentBoardPlayers[xy[0]][xy[1]] = gpIDtoPlayer(gpID)+kingMe; // set new spot
 			      	// see if another jump available
 			      	var jumpAvailable = false;
 			      	var adjSpots = setAdjSpots(parseInt(xy[0]),parseInt(xy[1]));
@@ -336,7 +350,7 @@ $(function() {
 			      	currentBoardMovable[xy[0]][xy[1]] = '';
 			      	currentAvailableMoves[xy[0]][xy[1]] = '';
 			      	xy = spotXY(spotID);
-			      	currentBoardPlayers[xy[0]][xy[1]] = gpIDtoPlayer(gpID); // set new spot
+			      	currentBoardPlayers[xy[0]][xy[1]] = gpIDtoPlayer(gpID)+kingMe; // set new spot
 			      	switchPlayer();
 			    	}
       		}

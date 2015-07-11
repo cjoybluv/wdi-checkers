@@ -74,9 +74,10 @@ $(function() {
     	return 'r' + xy[0] + 'c' + xy[1];  // xy in string > spotID
     };
     var ob = function(num,dir) {
-    	var ob = false;
-    	if (num===0 && dir==='-') {ob=true;}
-    	if (num===7 && dir==='+') {ob=true;}
+    	var obFlag = false;
+    	if (num===0 && dir==='-') {obFlag=true;}
+    	if (num===7 && dir==='+') {obFlag=true;}
+    	return obFlag;
     };
     // var xyToGpID = function(xy,player) {
     // 	var king = '';
@@ -86,8 +87,10 @@ $(function() {
     // 	return 'gp' + player + xy + king;
     // };
 
-    var whoseSpot = function(spotXY) {
-    	return currentBoardPlayers[parseInt(spotXY[0])][parseInt(spotXY[1])];
+    var whoseSpot = function(xy) {
+    	console.log('whoseSpot! xy',xy);
+    	if (xy)
+    	return currentBoardPlayers[parseInt(xy[0])][parseInt(xy[1])];
     };
 
     var setAdjSpots =  function(row,col) {
@@ -128,7 +131,7 @@ $(function() {
      	for (var i=0;i<adjSpots.length;i++) {
      		jumpSpot='';
      		spot = checkOffBoard(adjSpots[i]);
-     		if (spot !== 'offBoard') {
+     		if (spot !=='' && spot !== 'offBoard') {
      			if (whoseSpot(spot)===currentOpponent) {
      				jumpSpot = jumpSpotXY(originXY,spot);
      			}
@@ -149,12 +152,17 @@ $(function() {
     };
 
     var checkOffBoard = function(spot) {
-    	if (/[0-7][0-7]/.test(spot)) {
+    	var rtnVal='';
+    	var d1 = parseInt(spot[0]);
+    	var d2 = parseInt(spot[1]);
+    	if (d1 >= 0 && d1 <= 7 && d2 >= 0 && d2 <= 7) {
 		// if ((spot.lenghth>2||spot[0]<'0'||spot'7')||spot[1]<'0'||spot[1]>'7') {
-			return spot;
+			rtnVal = spot;
 		} else {
-			return 'offBoard';
+			rtnVal = 'offBoard';
 		}
+		console.log('checkOffBoard',rtnVal);
+		return rtnVal;
 	};
 
     var jumpSpotXY = function(originXY,targetXY) {
@@ -183,7 +191,7 @@ $(function() {
 	var pieceIsMovable = function(row,col) {
 		var movable = false;
 		var moves = [];
-		currentDirection = setDirection(row,col);
+		currentDirection = setDirection(parseInt(row),parseInt(col));
 		var adjSpots = setAdjSpots(row,col);
 		// console.log('back from setAdjSpots',adjSpots,row,col);
 		for (var i = 0;i < adjSpots.length;i++) {
@@ -314,7 +322,7 @@ $(function() {
       			// check for jump here; if so; 1) pick-up jumped piece; 
     			// 2) if another.jumpAvailable DO> same.player, only.that.piece
     		    //   provide for stop-turn-buton?
-    		    console.log('distanceBetween',distanceBetween(originXY,targetXY));
+    		    // console.log('distanceBetween',distanceBetween(originXY,targetXY));
     		    if (distanceBetween(originXY,targetXY)===2) {
     		    	// jump
     		    	console.log('JUMP,JUMP,JUMP');

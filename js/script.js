@@ -12,6 +12,7 @@ $(function() {
    	var currentOpponent = currentPlayer==='B' ? 'W' : 'B';
 	var currentDirection = '';  // '+' Down the board, '-' Up, 'K' King Up or Down, '' not set
  	var currentAvailableMoves = [];
+ 	var jumpingPieceXY = '';
 
 	var initStartBoard = function() {
 		var startBoard = []; 
@@ -89,6 +90,7 @@ $(function() {
     };
 
     var setAdjSpots =  function(row,col) {
+    	// take num row/col returns  array[] of adjSpots incl. JumpSpots
     	var originXY = row.toString() + col.toString();
     	var adjSpots = [];  // array of xy str elements ['51','53']
     	switch (currentDirection) {
@@ -155,7 +157,7 @@ $(function() {
 	};
 
     var jumpSpotXY = function(originXY,targetXY) {
-    	// console.log('jumpSpotXY: Oxy Txy:',originXY,targetXY)
+    	// returns spot between originXY & target in XY fmt
     	var jumpX = targetXY[0]<originXY[0] ? parseInt(targetXY[0])-1 : parseInt(targetXY[0])+1;
     	var jumpY = targetXY[[1]]<originXY[1] ? parseInt(targetXY[1])-1 : parseInt(targetXY[1])+1;
    		return jumpX.toString() + jumpY.toString();
@@ -198,14 +200,27 @@ $(function() {
 
 	 var setBoardMovable = function() {
 	 	currentBoardMovable = [];
+
+	 	var jr = '';
+	 	var jc = '';
+	 	if (jumpingPieceXY !== '') {
+	 		jr = parseInt(jumpingPieceXY[0]);
+	 		jc = parseInt(jumpingPieceXY[1]);
+	 	}
 	 	var gp = '';
  		for (var row = 0; row < 8; row++) {
 	 		currentBoardMovable[row] = [];
 	 		for (var col = 0; col < 8; col++) {
- 				gp = currentBoardPlayers[row][col];
-	 			if (gp !== '' && gp[0]===currentPlayer) {
-	 				currentBoardMovable[row][col] = pieceIsMovable(row,col);
-	 			} 
+	 			if (jumpingPieceXY !=='') {
+	 				if (row===jr && col===jc) {
+	 					currentBoardMovable[row][col] = pieceIsMovable(row,col);	
+	 				}
+	 			} else {
+	 				gp = currentBoardPlayers[row][col];
+		 			if (gp !== '' && gp[0]===currentPlayer) {
+		 				currentBoardMovable[row][col] = pieceIsMovable(row,col);
+		 			}
+	 			}
 	 		}
 	 	}
 	 };
@@ -274,32 +289,56 @@ $(function() {
       drop: function( event, ui ) {
       	// update currentBoardPlayers
 		var gpID = event.toElement.id;			// gbID
-		var xy = gpIDtoXY(gpID);  				// gpID as XY
+		var originXY = gpIDtoXY(gpID);  				// gpID as XY
 		var spotID = event.target.id;			// target spot id
 		var targetXY = spotXY(spotID);
-      	// console.log("drop: toElement.id", gpID,xy);  
-      	// console.log("drop: target.id", spotID);		
+      	console.log("drop: toElement.id", gpID,originXY);  
+      	console.log("drop: target.id", spotID);		
       	if (currentBoardMovable[gpID[3]][gpID[4]] && currentPlayer===gpID[2]) {
       		if (currentAvailableMoves[gpID[3]][gpID[4]].indexOf(targetXY)>-1) {
+		      	jumpingPieceXY = '';
       			// check for jump here; if so; 1) pick-up jumped piece; 
     			// 2) if another.jumpAvailable DO> same.player, only.that.piece
     		    //   provide for stop-turn-buton?
-    		    console.log('distanceBetween',distanceBetween(xy,targetXY));
-    		    if (distanceBetween(xy,targetXY)===2) {
+    		    console.log('distanceBetween',distanceBetween(originXY,targetXY));
+    		    if (distanceBetween(originXY,targetXY)===2) {
     		    	// jump
     		    	console.log('JUMP,JUMP,JUMP');
-    		    	xy = spotBetweenXY(xy,targetXY);
+    		    	var xy = '';
+    		    	var captureXY = spotBetweenXY(originXY,targetXY);
     		    	// console.log('spotBetweenXY',spot);
+    		    	xy = originXY;
+    		    	currentBoardPlayers[xy[0]][xy[1]] = '';   // clear origin
+			      	currentBoardMovable[xy[0]][xy[1]] = '';
+			      	currentAvailableMoves[xy[0]][xy[1]] = '';
+			      	xy = captureXY;
     		    	currentBoardPlayers[xy[0]][xy[1]] = '';   // capture piece	
 			      	currentBoardMovable[xy[0]][xy[1]] = '';
 			      	currentAvailableMoves[xy[0]][xy[1]] = '';
-    		    }
-		      	currentBoardPlayers[xy[0]][xy[1]] = '';   // clear orig spot
-		      	currentBoardMovable[xy[0]][xy[1]] = '';
-		      	currentAvailableMoves[xy[0]][xy[1]] = '';
-		      	xy = spotXY(spotID);
-		      	currentBoardPlayers[xy[0]][xy[1]] = gpIDtoPlayer(gpID); // set new spot
-		      	switchPlayer();
+			      	xy = spotXY(spotID);
+			      	currentBoardPlayers[xy[0]][xy[1]] = gpIDtoPlayer(gpID); // set new spot
+			      	// see if another jump available
+			      	var jumpAvailable = false;
+			      	var adjSpots = setAdjSpots(parseInt(xy[0]),parseInt(xy[1]));
+			      	for (var i=0;i<adjSpots.length;i++) {
+			      	    if (distanceBetween(xy,adjSpots[i])===2) {
+			      	    	jumpAvailable = true;
+			      	    }
+			      	}
+			      	if (!jumpAvailable) {
+			      		switchPlayer();
+			      	} else {
+			      		jumpingPieceXY = targetXY;
+			      	}
+    		    } else {
+			      	xy = originXY;
+			      	currentBoardPlayers[xy[0]][xy[1]] = '';   // clear orig spot
+			      	currentBoardMovable[xy[0]][xy[1]] = '';
+			      	currentAvailableMoves[xy[0]][xy[1]] = '';
+			      	xy = spotXY(spotID);
+			      	currentBoardPlayers[xy[0]][xy[1]] = gpIDtoPlayer(gpID); // set new spot
+			      	switchPlayer();
+			    	}
       		}
 	    }
       	// console.log('DROP: player',gpIDtoPlayer(gpID));

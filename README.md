@@ -10,6 +10,7 @@ html/js/css checkers project #1
       jQuery Mouse Listens:  game-piece.draggable, game-spot.droppable,  
      have: King pieces.png,   
 
-     NEXT: setAdjSpots, needs jump logic; 
+7/10/2015 17:00  commit:  Mouse Listener delegation working
+          : setAdjSpots, needs jump logic; 
            new makeMove:  set currentBoard for accepted.move, remove jumped pieces, 
            reset displayBoard

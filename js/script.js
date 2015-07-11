@@ -61,15 +61,21 @@ $(function() {
     var setDirection = function(row,col) {
     	if (isKing(row,col)) {
     		return 'K';
-    	} else if (currentBoardPlayers[row][col]==="B") {
+    	} else if (currentBoardPlayers[row][col][0]==="B") {
     		return '+';
     	} else {
     		return '-';
     	}
     };
     var spotXY = function(spotID) {
-    	return spotID[1]+spotID[3];   //  return xy in string
+    	if (/r[0-7]c[0-7]/.test(spotID)) {
+    		return spotID[1]+spotID[3];   //  return xy in string	
+    	} else {
+    		return 'offBoard'
+    	}
+    	
     };
+
     var xyToSpotID = function(xy) {
     	return 'r' + xy[0] + 'c' + xy[1];  // xy in string > spotID
     };
@@ -79,18 +85,15 @@ $(function() {
     	if (num===7 && dir==='+') {obFlag=true;}
     	return obFlag;
     };
-    // var xyToGpID = function(xy,player) {
-    // 	var king = '';
-    // 	if (player.length > 1) {
-    // 		king = 'K';
-    // 	}
-    // 	return 'gp' + player + xy + king;
-    // };
 
     var whoseSpot = function(xy) {
-    	console.log('whoseSpot! xy',xy);
-    	if (xy)
-    	return currentBoardPlayers[parseInt(xy[0])][parseInt(xy[1])];
+    	// console.log('whoseSpot! xy',xy); only return B || W
+    	var boardPlayer = currentBoardPlayers[parseInt(xy[0])][parseInt(xy[1])];
+    	if (boardPlayer.length>1) {
+    		boardPlayer = boardPlayer[0];
+    	}
+    	return boardPlayer;
+    	// return currentBoardPlayers[parseInt(xy[0])][parseInt(xy[1])];
     };
 
     var setAdjSpots =  function(row,col) {
@@ -155,13 +158,13 @@ $(function() {
     	var rtnVal='';
     	var d1 = parseInt(spot[0]);
     	var d2 = parseInt(spot[1]);
-    	if (d1 >= 0 && d1 <= 7 && d2 >= 0 && d2 <= 7) {
+    	if (!(isNaN(spot)) && d1 >= 0 && d1 <= 7 && d2 >= 0 && d2 <= 7) {
 		// if ((spot.lenghth>2||spot[0]<'0'||spot'7')||spot[1]<'0'||spot[1]>'7') {
 			rtnVal = spot;
 		} else {
 			rtnVal = 'offBoard';
 		}
-		console.log('checkOffBoard',rtnVal);
+		// console.log('checkOffBoard',rtnVal);
 		return rtnVal;
 	};
 
@@ -174,8 +177,9 @@ $(function() {
 
     var distanceBetween = function(spotA,spotB) {
     	var rdist = Math.abs(parseInt(spotA[0])-parseInt(spotB[0]));
-    	var cdist = Math.abs(parseInt(spotA[1])-parseInt(spotB[1]));
-    	return (rdist>cdist) ? rdist : cdist;
+    	// var cdist = Math.abs(parseInt(spotA[1])-parseInt(spotB[1]));
+    	// return (rdist>cdist) ? rdist : cdist;
+    	return rdist;
     };
 
     var spotBetweenXY = function(spotA,spotB) {
@@ -209,6 +213,7 @@ $(function() {
 
 	 var setBoardMovable = function() {
 	 	currentBoardMovable = [];
+	 	currentAvailableMoves = [];
 
 	 	var jr = '';
 	 	var jc = '';
@@ -219,7 +224,9 @@ $(function() {
 	 	var gp = '';
  		for (var row = 0; row < 8; row++) {
 	 		currentBoardMovable[row] = [];
+	 		currentAvailableMoves[row] = [];
 	 		for (var col = 0; col < 8; col++) {
+	 			// if jumpingPieceXY exists > only make that piece movable
 	 			if (jumpingPieceXY !=='') {
 	 				if (row===jr && col===jc) {
 	 					currentBoardMovable[row][col] = pieceIsMovable(row,col);	
@@ -271,9 +278,32 @@ $(function() {
 		console.log('player switched to',currentPlayer);
 	};
 
+	var pieceCount = function(player) {
+		var pCnt = 0;
+		for (var row=0;row<8;row++) {
+			for (var col=0;col<8;col++) {
+				if (currentBoardPlayers[row][col][0]===player) {
+					pCnt += 1;
+				}
+			}
+		}
+		return pCnt;
+	};
 
+	var availableMoveCount = function() {
+		// console.log('availableMoveCount');
 
-
+		var mCnt = 0;
+		for (var row=0;row<8;row++) {
+			for (var col=0;col<8;col++) {
+				if (typeof currentAvailableMoves[row][col] !== 'undefined') {
+					mCnt += currentAvailableMoves[row][col].length;
+				}
+			}
+		}
+		console.log('availableMoveCount',mCnt);
+		return mCnt;
+	};
 
 
 // 
@@ -285,7 +315,7 @@ $(function() {
 	 	// console.log('movable',currentBoardMovable);
 	 	displayBoard();
 
-
+	 	console.log("BLACK's Move!");
 
 
     $( ".game-spot" ).on('mouseenter','.game-piece', function(){
@@ -301,24 +331,24 @@ $(function() {
 		var originXY = gpIDtoXY(gpID);  				// gpID as XY
 		var spotID = event.target.id;			// target spot id
 		var targetXY = spotXY(spotID);
-      	console.log("drop: toElement.id", gpID,originXY);  
-      	console.log("drop: target.id", spotID);		
+      	console.log("drop: toElement.id, in(XY), target.id", gpID,originXY,spotID);  
       	if (currentBoardMovable[gpID[3]][gpID[4]] && currentPlayer===gpID[2]) {
       		if (currentAvailableMoves[gpID[3]][gpID[4]].indexOf(targetXY)>-1) {
       			// kingMe??
       			var kingMe = '';
-      			if (currentPlayer==='B' && parseInt(targetXY[0])===7) {
+      			if (gpID[5] !=='K' && currentPlayer==='B' && parseInt(targetXY[0])===7) {
       				kingMe = 'K';
       			}
-      			if (currentPlayer==='W' && parseInt(targetXY[0])===0) {
+      			if (gpID[5] !=='K' && currentPlayer==='W' && parseInt(targetXY[0])===0) {
       				kingMe = 'K';
       			}
       			if (kingMe !== '') {
       				console.log('KING ME!');
       			}
-			// console.log('KING ME!',kingMe,'spotID',spotID);
       			// reset jumpingPieceXY
-		      	if (jumpingPieceXY !=='') {jumpingPieceXY = '';}
+		      	if (jumpingPieceXY !=='') {
+		      		jumpingPieceXY = '';
+		      	}
       			// check for jump here; if so; 1) pick-up jumped piece; 
     			// 2) if another.jumpAvailable DO> same.player, only.that.piece
     		    //   provide for stop-turn-buton?
@@ -339,6 +369,15 @@ $(function() {
 			      	currentAvailableMoves[xy[0]][xy[1]] = '';
 			      	xy = spotXY(spotID);
 			      	currentBoardPlayers[xy[0]][xy[1]] = gpIDtoPlayer(gpID)+kingMe; // set new spot
+
+			      	// WIN ???
+			      	var oCnt = pieceCount(currentOpponent);
+			      	console.log('currentOpponent, oCnt',currentOpponent,oCnt);
+			      	if (oCnt===0) {
+			      		// GAME OVER
+			      		console.log('GAME OVER !!!');
+			      	}
+
 			      	// see if another jump available
 			      	var jumpAvailable = false;
 			      	var adjSpots = setAdjSpots(parseInt(xy[0]),parseInt(xy[1]));
@@ -350,6 +389,7 @@ $(function() {
 			      	if (!jumpAvailable) {
 			      		switchPlayer();
 			      	} else {
+			      		console.log('DOUBLE JUMP TIME!!!');
 			      		jumpingPieceXY = targetXY;
 			      	}
     		    } else {
@@ -362,10 +402,16 @@ $(function() {
 			      	switchPlayer();
 			    	}
       		}
+	    } else {
+	    	console.log('Invalid Move');
 	    }
       	// console.log('DROP: player',gpIDtoPlayer(gpID));
       	setBoardMovable();
       	displayBoard();
+      	// check for stymied
+      	if (availableMoveCount()===0) {
+      		console.log('GAME OVER !!! currentPlayer: ',currentPlayer,'STYMIED!!');
+      	}
       	console.log('DROP: new board:',currentBoardPlayers);
       	console.log('DROP: new board movable:',currentBoardMovable);
       	console.log('DROP: currentAvailableMoves',currentAvailableMoves);

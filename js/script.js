@@ -6,6 +6,9 @@
 
 $(function() {
 
+	// disable select so works on mobile
+	document.querySelector('html').onselectstart = function(){ return false };
+
 	var currentBoardPlayers = [];  // xy arr's row by col; start = 'init setup'
 									// values: B, W, BK, WK
 	var currentBoardMovable = [];
@@ -309,13 +312,18 @@ $(function() {
 // 
 // MAINLINE
 // 
-	 	currentBoardPlayers = initStartBoard();
-	 	// console.log('players',currentBoardPlayers);
-	 	setBoardMovable();
-	 	// console.log('movable',currentBoardMovable);
-	 	displayBoard();
+ 	currentBoardPlayers = initStartBoard();
+ 	// console.log('players',currentBoardPlayers);
+ 	setBoardMovable();
+ 	// console.log('movable',currentBoardMovable);
+ 	displayBoard();
 
-	 	console.log("BLACK's Move!");
+ 	console.log("BLACK's Move!");
+
+ 	$('#start-button').on('click', function(e) {
+ 		console.log('start clicked');
+ 	});
+
 
 
     $( ".game-spot" ).on('mouseenter','.game-piece', function(){

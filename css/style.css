@@ -41,8 +41,15 @@ h2 {
 	position: absolute;
 	z-index: 999;
 }
-
-
+.blog-space {
+	min-height: 300px;
+}
+#accordion {
+	margin: 20px;
+}
+#game-blog li {
+	margin-left: -40px;
+}
 /* BUTTON FROM http://codepen.io/pouretrebelle/pen/HzvCl */
 @import url(http://fonts.googleapis.com/css?family=Open+Sans);
 

@@ -6,6 +6,8 @@
 
 $(function() {
 
+	localStorage.gameState = 'page-loaded';
+
 	$('#accordion').accordion({
 		collapsible: true,
 		heightStyle: "fill",
@@ -64,7 +66,7 @@ $(function() {
     	return player;
     };
     var gpIDtoXY = function(gpID) {
-    	return gpID[3] + gpID[4]
+    	return gpID[3] + gpID[4];
     };
     var isKing = function(row,col) {
     	// console.log('isKing',currentBoardPlayers[row][col]);
@@ -83,7 +85,7 @@ $(function() {
     	if (/r[0-7]c[0-7]/.test(spotID)) {
     		return spotID[1]+spotID[3];   //  return xy in string	
     	} else {
-    		return 'offBoard'
+    		return 'offBoard';
     	}
     	
     };
@@ -165,7 +167,7 @@ $(function() {
      	}
     	temp = adjSpots.map(checkOffBoard);
     	adjSpots = temp;
-
+	
     	// console.log('POST Jump: adjSpots,row,col,dir',adjSpots,row,col,currentPlayer)
     	return adjSpots;
     };
@@ -354,6 +356,7 @@ $(function() {
 	}
 
 	var gameOverAct = function() {
+		localStorage.gameState = 'game-over';
 		console.log('gameOverAct');
       	// for (var t=0;t<1;t++) {
       	// 	$('#game-board').toggle('explode');	
@@ -402,7 +405,7 @@ $(function() {
  		// SURRENDER
  		if (buttonText==='surrender?') {
  			gameOver = true;
-			console.log('<<< Game Started >>>');
+			console.log('### surrender ###');
 			var result = updateBlog('game-blog','### surrender ###');
  			var result = gameOverAct();
  		}
@@ -411,6 +414,7 @@ $(function() {
  		// START GAME 
  		if (buttonText==='Start Game') {
  			gameStarted = true;
+			localStorage.gameState = 'game-started';
  			setBoardMovable();
  			displayBoard();
 

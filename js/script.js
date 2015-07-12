@@ -4,16 +4,6 @@
 //   gpID   = id of game-piece img;  = gp[B|W]<xy>[K]  ex:  gpB45K, blck on 45 king
 
 
-// attempt to make touch punch work - nogo
-// 
-// $(window).bind('beforeunload', function(e) {
-//     if (1)
-//     {
-//         return "Unloading this page may lose .What do you want to do..."
-//         e.preventDefault();
-//     }
-// });
-
 $(function() {
 
 	localStorage.gameState = 'page-loaded';
@@ -38,6 +28,35 @@ $(function() {
  	var jumpingPieceXY = '';
  	var gameOver = false;
  	var gameStarted = false;
+
+
+	function touchHandler(event) {
+	    var touch = event.changedTouches[0];
+
+	    var simulatedEvent = document.createEvent("MouseEvent");
+	        simulatedEvent.initMouseEvent({
+	        touchstart: "mousedown",
+	        touchmove: "mousemove",
+	        touchend: "mouseup"
+	    }[event.type], true, true, window, 1,
+	        touch.screenX, touch.screenY,
+	        touch.clientX, touch.clientY, false,
+	        false, false, false, 0, null);
+
+	    touch.target.dispatchEvent(simulatedEvent);
+	    event.preventDefault();
+	}
+
+	function initTouchHandler() {
+	    document.addEventListener("touchstart", touchHandler, true);
+	    document.addEventListener("touchmove", touchHandler, true);
+	    document.addEventListener("touchend", touchHandler, true);
+	    document.addEventListener("touchcancel", touchHandler, true);
+	}
+
+
+
+
 
 	var initStartBoard = function() {
 		var startBoard = []; 
@@ -400,6 +419,9 @@ $(function() {
 // 
 // MAINLINE
 // 
+
+	initTouchHandler();
+	
  	currentBoardPlayers = initStartBoard();
  	// console.log('players',currentBoardPlayers);
  	setBoardMovable();

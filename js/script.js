@@ -24,6 +24,7 @@ $(function() {
 	var currentDirection = '';  // '+' Down the board, '-' Up, 'K' King Up or Down, '' not set
  	var currentAvailableMoves = [];
  	var jumpingPieceXY = '';
+ 	var gameOver = false;
 
 	var initStartBoard = function() {
 		var startBoard = []; 
@@ -297,13 +298,17 @@ $(function() {
 	 };
 
 	var playerName = function(player) {
-		return player==='B' ? 'Black' : 'Gold';
+		if (currentPlayer==='B') {
+			return 'Black';
+		} else {
+			return 'Gold';
+		}
 	};
 
 	var switchPlayer = function() {
 		currentPlayer = currentPlayer === 'B' ? 'W' : 'B';
-    	currentOpponent = currentPlayer==='B' ? 'W' : 'B';
-    	var player = currentPlayer==='B' ? 'Black' : 'Gold';
+    	currentOpponent = currentPlayer === 'B' ? 'W' : 'B';
+    	var player = currentPlayer === 'B' ? 'Black' : 'Gold';
 		console.log(player + "'s Move");
 		var result = updateBlog('game-blog','>>> '+playerName(player) + "'s Move");
 	};
@@ -341,6 +346,29 @@ $(function() {
 		return true;
 	}
 
+	var gameOverAct = function() {
+		console.log('gameOverAct');
+      	for (var t=0;t<1;t++) {
+      		$('#game-board').toggle('explode');	
+      	}
+      	// interact with player here
+      	// reset board & state
+		currentBoardPlayers = [];  // xy arr's row by col; start = 'init setup'
+										// values: B, W, BK, WK
+		currentBoardMovable = [];
+		currentPlayer = 'B';
+	   	currentOpponent = currentPlayer==='B' ? 'W' : 'B';
+		currentDirection = '';  // '+' Down the board, '-' Up, 'K' King Up or Down, '' not set
+	 	currentAvailableMoves = [];
+	 	jumpingPieceXY = '';
+	 	gameOver = false;
+
+  	 	currentBoardPlayers = initStartBoard();
+	 	setBoardMovable();
+	 	displayBoard();
+	 	return true;
+	};
+
 // 
 // MAINLINE
 // 
@@ -354,6 +382,15 @@ $(function() {
  	$('#do-button').on('click', function(e) {
 
  		var buttonText = $('#do-button').html();
+ 		
+ 		// SURRENDER
+ 		if (buttonText==='surrender?') {
+ 			gameOver = true;
+ 			var result = gameOverAct();
+ 		}
+
+
+ 		// START GAME 
  		if (buttonText==='Start Game') {
 			console.log('<<< Game Started >>>');
 			var result = updateBlog('game-blog','<<< Game Started >>>');
@@ -425,26 +462,32 @@ $(function() {
 						var result = updateBlog('game-blog','Player '+playerName(currentOpponent)+' has '+oCnt+' pieces left.');
 				      	if (oCnt===0) {
 				      		// GAME OVER
+				      		gameOver = true;
 				      		console.log('GAME OVER !!!',currentPlayer,'has won!');
 							var result = updateBlog('game-blog','>>> GAME OVER <<<');
 							var result = updateBlog('game-blog',playerName(currentPlayer)+' has won!');
 				      	}
-
-				      	// see if another jump available
-				      	var jumpAvailable = false;
-				      	var adjSpots = setAdjSpots(parseInt(xy[0]),parseInt(xy[1]));
-				      	for (var i=0;i<adjSpots.length;i++) {
-				      	    if (distanceBetween(xy,adjSpots[i])===2) {
-				      	    	jumpAvailable = true;
-				      	    }
-				      	}
-				      	if (!jumpAvailable) {
-				      		switchPlayer();
-				      	} else {
-				      		console.log('DOUBLE JUMP TIME!!!');
-							var result = updateBlog('game-blog','DOUBLE JUMP TIME !!!');
-				      		jumpingPieceXY = targetXY;
-				      	}
+				      	if (!gameOver) {
+					      	// see if another jump available
+					      	var jumpAvailable = false;
+					      	var adjSpots = setAdjSpots(parseInt(xy[0]),parseInt(xy[1]));
+					      	for (var i=0;i<adjSpots.length;i++) {
+					      	    if (distanceBetween(xy,adjSpots[i])===2) {
+					      	    	jumpAvailable = true;
+					      	    }
+					      	}
+					      	if (!jumpAvailable) {
+					      		switchPlayer();
+					      	} else {
+					      		console.log('DOUBLE JUMP TIME!!!');
+								var result = updateBlog('game-blog','DOUBLE JUMP TIME !!!');
+					      		jumpingPieceXY = targetXY;
+					      	}
+					      	if (oCnt<12) {
+					      		$('#do-button').html('surrender?');
+		      			 		$('#do-button').switchClass("arrow","diamond");
+					      	}
+					      }   // gameOver?
 	    		    } else {
 				      	xy = originXY;
 				      	currentBoardPlayers[xy[0]][xy[1]] = '';   // clear orig spot
@@ -464,6 +507,7 @@ $(function() {
 	      	displayBoard();
 	      	// check for stymied
 	      	if (availableMoveCount()===0) {
+	      		gameOver = true;
 	      		console.log('GAME OVER !!! currentPlayer: ',currentPlayer,'STYMIED!!');
 				var result = updateBlog('game-blog','!!! GAME OVER !!!');
 				var result = updateBlog('game-blog', playerName(currentPlayer)+' STYMIED!!');
@@ -472,7 +516,10 @@ $(function() {
 	      	// console.log('DROP: new board movable:',currentBoardMovable);
 	      	// console.log('DROP: currentAvailableMoves',currentAvailableMoves);
 			// $(".game-piece").draggable('enable');
-	      }
+		      if (gameOver) {
+		      	var result = gameOverAct();
+		      }
+	      }  // end of DROP:
 	    });
 		// END OF game-spot:DROP
 

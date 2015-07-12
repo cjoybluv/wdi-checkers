@@ -29,13 +29,13 @@ h2 {
 	margin: 0 0 0 0;
 	width: 70px;
 	height: 70px;
+	cursor: not-allowed;
 }
 .red-square {
 	background-color: red;
 }
 .blue-square {
 	background-color: blue;
-	cursor: not-allowed;	
 }
 .game-piece {
 	position: absolute;
@@ -43,14 +43,25 @@ h2 {
 }
 .blog-space {
 	min-height: 300px;
+	height: 300px;
 }
 #accordion {
-	margin: 20px;
+	margin: 30px;
+	font-family: 'Gloria Hallelujah', cursive;
+	font-size: 18px;
+	font-weight: 900;
 }
 #game-blog li {
 	margin-left: -40px;
+	list-style: none;
 }
-/* BUTTON FROM http://codepen.io/pouretrebelle/pen/HzvCl */
+.movable {
+	cursor: pointer;
+}
+.good-move {
+	cursor: url(http://i.imgur.com/ZcD0zGy.png), pointer;
+}
+/* BUTTON FROM http://codepen.io/pouretrebelle/pen/HzvCl     */
 @import url(http://fonts.googleapis.com/css?family=Open+Sans);
 
 aside {

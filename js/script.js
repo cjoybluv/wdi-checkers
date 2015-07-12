@@ -3,15 +3,16 @@
 //   spotID = id of spot div;   = r#c# format  ex:  r4c5
 //   gpID   = id of game-piece img;  = gp[B|W]<xy>[K]  ex:  gpB45K, blck on 45 king
 
-$(window).bind('beforeunload', function(e) {
 
-    if (1)
-    {
-
-        return "Unloading this page may lose .What do you want to do..."
-        e.preventDefault();
-    }
-});
+// attempt to make touch punch work - nogo
+// 
+// $(window).bind('beforeunload', function(e) {
+//     if (1)
+//     {
+//         return "Unloading this page may lose .What do you want to do..."
+//         e.preventDefault();
+//     }
+// });
 
 $(function() {
 

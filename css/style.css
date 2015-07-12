@@ -52,7 +52,8 @@ h2 {
 	font-weight: 900;
 }
 #game-blog li {
-	margin-left: -40px;
+	margin-left: -60px;
+	text-align: left;
 	list-style: none;
 }
 .movable {

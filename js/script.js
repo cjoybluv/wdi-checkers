@@ -360,7 +360,7 @@ $(function() {
 		localStorage.gameState = 'game-over';
 		console.log('gameOverAct');
       	// for (var t=0;t<1;t++) {
-      	// 	$('#game-board').toggle('explode');	
+      	// 	$('#game-space').toggle('explode');	
       	// }
       	// interact with player here
       	// reset board & state
@@ -426,6 +426,11 @@ $(function() {
 			var result = updateBlog('game-blog',">>> Black's Move");
 	 		$('#do-button').html('now playing');
 	 		$('#do-button').switchClass("ribbon","arrow");
+			$('#accordion').accordion({
+				active: 1
+			});
+
+
  		}
 	
  
@@ -514,7 +519,7 @@ $(function() {
 									var result = updateBlog('game-blog','DOUBLE JUMP TIME !!!');
 						      		jumpingPieceXY = targetXY;
 						      	}
-						      	if (oCnt<4) {
+						      	if (oCnt<12) {
 						      		$('#do-button').html('surrender?');
 			      			 		$('#do-button').switchClass("arrow","diamond");
 						      	}

@@ -44,12 +44,23 @@ h2 {
 .blog-space {
 	min-height: 300px;
 	height: 300px;
+	font-size: 11px;
+}
+.modal-body {
+	min-height: 400px;
+	min-width: 400px;
 }
 #accordion {
 	margin: 30px;
 	font-family: 'Gloria Hallelujah', cursive;
 	font-size: 18px;
 	font-weight: 900;
+}
+#how-to-play li {
+	margin-left: -60px;
+	text-align: left;
+	list-style: none;
+	margin-bottom: 10px;
 }
 #game-blog li {
 	margin-left: -60px;

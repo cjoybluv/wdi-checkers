@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Dave's Checkers</title>
+
+
+	<!-- font load -->
+	<link href='http://fonts.googleapis.com/css?family=Shojumaru' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Mystery+Quest' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Gloria+Hallelujah' rel='stylesheet' type='text/css'>
+	<!-- bootstrap, jquery, jqueryui -->
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script> -->
+	<!-- <script src="js/jquery.ui.touch-punch.min.js"></script> -->
+
+	<script src="js/script.js"></script>
+	<link rel="stylesheet" href="css/style.css">
+
+
+</head>
+<body>
+<div class="container">
+	<div id="game-board" class="col-md-6">
+		<div class="row">
+			<div id="r0c0" class="col-xs-1 game-spot red-square"></div>
+			<div id="r0c1" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r0c2" class="col-xs-1 game-spot red-square"></div>
+			<div id="r0c3" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r0c4" class="col-xs-1 game-spot red-square"></div>
+			<div id="r0c5" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r0c6" class="col-xs-1 game-spot red-square"></div>
+			<div id="r0c7" class="col-xs-1 game-spot blue-square"></div>
+		</div>
+		<div class="row">
+			<div id="r1c0" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r1c1" class="col-xs-1 game-spot red-square"></div>
+			<div id="r1c2" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r1c3" class="col-xs-1 game-spot red-square"></div>
+			<div id="r1c4" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r1c5" class="col-xs-1 game-spot red-square"></div>
+			<div id="r1c6" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r1c7" class="col-xs-1 game-spot red-square"></div>
+		</div>
+		<div class="row">
+			<div id="r2c0" class="col-xs-1 game-spot red-square"></div>
+			<div id="r2c1" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r2c2" class="col-xs-1 game-spot red-square"></div>
+			<div id="r2c3" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r2c4" class="col-xs-1 game-spot red-square"></div>
+			<div id="r2c5" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r2c6" class="col-xs-1 game-spot red-square"></div>
+			<div id="r2c7" class="col-xs-1 game-spot blue-square"></div>
+		</div>
+		<div class="row">
+			<div id="r3c0" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r3c1" class="col-xs-1 game-spot red-square"></div>
+			<div id="r3c2" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r3c3" class="col-xs-1 game-spot red-square"></div>
+			<div id="r3c4" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r3c5" class="col-xs-1 game-spot red-square"></div>
+			<div id="r3c6" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r3c7" class="col-xs-1 game-spot red-square"></div>
+		</div>
+		<div class="row">
+			<div id="r4c0" class="col-xs-1 game-spot red-square"></div>
+			<div id="r4c1" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r4c2" class="col-xs-1 game-spot red-square"></div>
+			<div id="r4c3" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r4c4" class="col-xs-1 game-spot red-square"></div>
+			<div id="r4c5" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r4c6" class="col-xs-1 game-spot red-square"></div>
+			<div id="r4c7" class="col-xs-1 game-spot blue-square"></div>
+		</div>
+		<div class="row">
+			<div id="r5c0" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r5c1" class="col-xs-1 game-spot red-square"></div>
+			<div id="r5c2" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r5c3" class="col-xs-1 game-spot red-square"></div>
+			<div id="r5c4" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r5c5" class="col-xs-1 game-spot red-square"></div>
+			<div id="r5c6" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r5c7" class="col-xs-1 game-spot red-square"></div>
+		</div>
+		<div class="row">
+			<div id="r6c0" class="col-xs-1 game-spot red-square"></div>
+			<div id="r6c1" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r6c2" class="col-xs-1 game-spot red-square"></div>
+			<div id="r6c3" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r6c4" class="col-xs-1 game-spot red-square"></div>
+			<div id="r6c5" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r6c6" class="col-xs-1 game-spot red-square"></div>
+			<div id="r6c7" class="col-xs-1 game-spot blue-square"></div>
+		</div>
+		<div class="row">
+			<div id="r7c0" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r7c1" class="col-xs-1 game-spot red-square"></div>
+			<div id="r7c2" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r7c3" class="col-xs-1 game-spot red-square"></div>
+			<div id="r7c4" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r7c5" class="col-xs-1 game-spot red-square"></div>
+			<div id="r7c6" class="col-xs-1 game-spot blue-square"></div>
+			<div id="r7c7" class="col-xs-1 game-spot red-square"></div>
+		</div>
+		
+	</div>
+	<!-- end of game board -->
+	<div id="game-panel" class="col-md-5">
+		<h2>Grandpa Dave's</h2>
+		<h1>CHECKERS</h1>
+		<aside id="do-button" href="#" class="ribbon">Start Game</aside>
+		<div class="blog-space">
+			<div id="accordion">
+				<h3>How to Play</h3>
+				<div>
+					<ul id="how-to-play">
+						<li>click on Start Game to begin</li>
+						<li>it's Black's move...</li>
+						<li>use your mouse to drag a game piece</li>
+						<li>drop the game piece on the desired spot</li>
+						<li>if it's a valid move, the piece will stay there</li>
+						<li>Watch the game blog to track whose move</li>
+						<LI>&nbsp;</LI>
+						<li>thanks for playing</li>
+						<li>&nbsp;</li>
+						<li><strong>Known Bug:</strong></li>
+						<li>White King can't do double-back-jump, argh!</li>
+						<li><span class="pull-right"><small>version 1.0</small></span></li>
+					</ul>
+				</div>
+				<h3>Game Blog</h3>
+				<div>
+					<ul id="game-blog"></ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>  
+<!-- end of container -->
+</body>
+</html>

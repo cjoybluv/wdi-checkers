@@ -308,7 +308,7 @@ $(function() {
 	 };
 
 	var playerName = function(player) {
-		if (currentPlayer==='B') {
+		if (player==='B') {
 			return 'Black';
 		} else {
 			return 'Gold';

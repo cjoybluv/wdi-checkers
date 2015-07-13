@@ -319,7 +319,7 @@ $(function() {
 		currentPlayer = currentPlayer === 'B' ? 'W' : 'B';
     	currentOpponent = currentPlayer === 'B' ? 'W' : 'B';
     	// var player = currentPlayer === 'B' ? 'Black' : 'Gold';
-		console.log(player + "'s Move");
+		console.log(currentPlayer + "'s Move");
 		var result = updateBlog('game-blog','>>> '+playerName(currentPlayer) + "'s Move");
 	};
 

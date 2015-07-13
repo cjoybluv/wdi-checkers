@@ -519,7 +519,7 @@ $(function() {
 									var result = updateBlog('game-blog','DOUBLE JUMP TIME !!!');
 						      		jumpingPieceXY = targetXY;
 						      	}
-						      	if (oCnt<12) {
+						      	if (oCnt<6) {
 						      		$('#do-button').html('surrender?');
 			      			 		$('#do-button').switchClass("arrow","diamond");
 						      	}

@@ -318,9 +318,9 @@ $(function() {
 	var switchPlayer = function() {
 		currentPlayer = currentPlayer === 'B' ? 'W' : 'B';
     	currentOpponent = currentPlayer === 'B' ? 'W' : 'B';
-    	var player = currentPlayer === 'B' ? 'Black' : 'Gold';
+    	// var player = currentPlayer === 'B' ? 'Black' : 'Gold';
 		console.log(player + "'s Move");
-		var result = updateBlog('game-blog','>>> '+playerName(player) + "'s Move");
+		var result = updateBlog('game-blog','>>> '+playerName(currentPlayer) + "'s Move");
 	};
 
 	var pieceCount = function(player) {

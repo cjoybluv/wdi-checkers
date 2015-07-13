@@ -505,13 +505,27 @@ $(function() {
 					      	}
 					      	if (!gameOver) {
 						      	// see if another jump available
+						      	// DOUBLE JUMP CHECK
 						      	var jumpAvailable = false;
-						      	var adjSpots = setAdjSpots(parseInt(xy[0]),parseInt(xy[1]));
-						      	for (var i=0;i<adjSpots.length;i++) {
-						      	    if (distanceBetween(xy,adjSpots[i])===2) {
-						      	    	jumpAvailable = true;
-						      	    }
+						      	// wip 1.1 solve WK dbl-jump
+						      	setBoardMovable();	
+						      	displayBoard();		
+						      	var moves = currentAvailableMoves[parseInt(xy[0])][parseInt(xy[1])];
+						      	for (var i=0;i<moves.length;i++) {
+						      		if (distanceBetween(xy,moves[i])===2) {
+						      			jumpAvailable = true;
+						      		}
 						      	}
+						      		
+						      	// wip 1.1 red-out START
+						      	// var adjSpots = setAdjSpots(parseInt(xy[0]),parseInt(xy[1]));
+						      	// for (var i=0;i<adjSpots.length;i++) {
+						      	//     if (distanceBetween(xy,adjSpots[i])===2) {
+						      	//     	jumpAvailable = true;
+						      	//     }
+						      	// }
+						      	// WIP 1.1 red-out STOP
+
 						      	if (!jumpAvailable) {
 						      		switchPlayer();
 						      	} else {

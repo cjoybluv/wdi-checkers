@@ -66,6 +66,7 @@ h2 {
 	margin-left: -60px;
 	text-align: left;
 	list-style: none;
+	margin-bottom: 10px;
 }
 .movable {
 	cursor: pointer;

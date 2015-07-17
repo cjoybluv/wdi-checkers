@@ -388,19 +388,19 @@ $(function() {
 	 					break;
  					case 'B':
 	 					$('#'+spotID).find('img').remove();
-	 					$('#'+spotID).append('<img id="gbB'+row+col+'" class="game-piece draggable" src="black.png" width="50">');
+	 					$('#'+spotID).append('<img id="gbB'+row+col+'" class="game-piece ui-widget-content ui-draggable draggable" src="black.png" width="50">');
 	 					break;
  					case 'W':
 	 					$('#'+spotID).find('img').remove();
-	 					$('#'+spotID).append('<img id="gbW'+row+col+'" class="game-piece draggable" src="white.png" width="50">');
+	 					$('#'+spotID).append('<img id="gbW'+row+col+'" class="game-piece ui-widget-content ui-draggable draggable" src="white.png" width="50">');
 	 					break;
  					case 'BK':
 	 					$('#'+spotID).find('img').remove();
-	 					$('#'+spotID).append('<img id="gbB'+row+col+'K" class="game-piece draggable" src="black-king.png" width="50">');
+	 					$('#'+spotID).append('<img id="gbB'+row+col+'K" class="game-piece ui-widget-content ui-draggable draggable" src="black-king.png" width="50">');
 	 					break;
  					case 'WK':
 	 					$('#'+spotID).find('img').remove();
-	 					$('#'+spotID).append('<img id="gbW'+row+col+'K" class="game-piece draggable" src="white-king.png" width="50">');
+	 					$('#'+spotID).append('<img id="gbW'+row+col+'K" class="game-piece ui-widget-content ui-draggable draggable" src="white-king.png" width="50">');
 	 					break;
 	 			}
 	 			// set game-spot class for cursor control

@@ -24,7 +24,7 @@ console.log(/[0-9]/.test("1-1"));
 
 var spot = '11';
 
-    	if (/[0-9][0-9]/.test(spot)) {
+    	if (/[0-7][0-7]/.test(spot)) {
     		console.log('hurray');
     	} else {
     		console.log('boo');

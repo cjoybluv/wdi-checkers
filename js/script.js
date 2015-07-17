@@ -91,6 +91,10 @@ $(function() {
     	
     };
 
+    var rcXY = function(r,c) {
+    	return r.toString()+c.toString();
+    }
+
     var xyToSpotID = function(xy) {
     	return 'r' + xy[0] + 'c' + xy[1];  // xy in string > spotID
     };
@@ -113,24 +117,24 @@ $(function() {
 
     var setAdjSpots =  function(row,col) {
     	// take num row/col returns  array[] of adjSpots incl. JumpSpots
-    	var originXY = row.toString() + col.toString();
+    	var originXY = rcXY(row,col);
     	var adjSpots = [];  // array of xy str elements ['51','53']
     	switch (currentDirection) {
     		case '':
     			break;
 			case '+':    // black
-				if (!ob(row,'+') && !ob(col,'+')) {adjSpots.push((row + 1).toString() + (col + 1).toString())};
-				if (!ob(row,'+') && !ob(col,'-')) {adjSpots.push((row + 1).toString() + (col - 1).toString())};
+				if (!ob(row,'+') && !ob(col,'+')) {adjSpots.push(rcXY(row+1,col+1))};
+				if (!ob(row,'+') && !ob(col,'-')) {adjSpots.push(rcXY(row+1,col-1))};
 				break;
 			case '-':     // white
-				if (!ob(row,'-') && !ob(col,'+')) {adjSpots.push((row - 1).toString() + (col + 1).toString())};
-				if (!ob(row,'-') && !ob(col,'-')) {adjSpots.push((row - 1).toString() + (col - 1).toString())};
+				if (!ob(row,'-') && !ob(col,'+')) {adjSpots.push(rcXY(row-1,col+1))};
+				if (!ob(row,'-') && !ob(col,'-')) {adjSpots.push(rcXY(row-1,col-1))};
 				break;
 			case 'K':
-				if (!ob(row,'+') && !ob(col,'+')) {adjSpots.push((row + 1).toString() + (col + 1).toString())};
-				if (!ob(row,'+') && !ob(col,'-')) {adjSpots.push((row + 1).toString() + (col - 1).toString())};
-				if (!ob(row,'-') && !ob(col,'+')) {adjSpots.push((row - 1).toString() + (col + 1).toString())};
-				if (!ob(row,'-') && !ob(col,'-')) {adjSpots.push((row - 1).toString() + (col - 1).toString())};
+				if (!ob(row,'+') && !ob(col,'+')) {adjSpots.push(rcXY(row+1,col+1))};
+				if (!ob(row,'+') && !ob(col,'-')) {adjSpots.push(rcXY(row+1,col-1))};
+				if (!ob(row,'-') && !ob(col,'+')) {adjSpots.push(rcXY(row-1,col+1))};
+				if (!ob(row,'-') && !ob(col,'-')) {adjSpots.push(rcXY(row-1,col-1))};
 				break;
     	}
 
@@ -208,8 +212,17 @@ $(function() {
     	var bc = parseInt(spotB[1]);
     	var r = ar > br ? ar-1 : br-1;
     	var c = ac > bc ? ac-1 : bc-1;
-    	return r.toString() + c.toString();
+    	return rcXY(r,c);
     }
+
+    var validXY = function(move) {
+		var validMove = false;
+		if (move !== '' && typeof move !== 'undefined' && move.length===2) {
+			// validMove = move.length===2 && move[0].match(/[0-7]/) && move[1].match(/[0-7]/) ? 'true' : 'false';
+			validMove = move[0].match(/[0-7]/) && move[1].match(/[0-7]/) ? 'true' : 'false';
+		}
+		return validMove;
+    };
 
 	var pieceIsMovable = function(row,col) {
 		var movable = false;
@@ -228,6 +241,91 @@ $(function() {
 		}
 		currentAvailableMoves[row][col] = moves;
 		return movable;
+	};
+
+
+	var mustJumpIfAvailable = function() {
+		// call from setBoardMovable end
+		var haveJump = false;
+		var jumpMoves = [];
+		var spotXY= '';
+		var spotB = '';
+		var moves = '';
+		var cam = currentAvailableMoves;
+		for (var r=0;r<cam.length;r++) {
+			jumpMoves[r] = [];
+			for (var c=0;c<cam[r].length;c++) {
+				jumpMoves[r][c] = [];
+				if (typeof cam[r][c] !== 'undefined') {
+					for (var m=0;m<cam[r][c].length;m++) {
+						if (distanceBetween(rcXY(r,c),cam[r][c][m])===2) {
+							haveJump = true;
+							jumpMoves[r][c][m] = cam[r][c][m];
+						} 
+					}
+
+				}
+			}
+		}
+		if (haveJump) {
+			currentAvailableMoves = jumpMoves;
+			for (var row=0;row<8;row++) {
+				for (var col=0;col<8;col++) {
+					var hasMove = false;
+					if (typeof currentAvailableMoves[row][col] !== 'undefined') {
+						for (var m=0;m<currentAvailableMoves[row][col].length;m++) {
+							var move = currentAvailableMoves[row][col][m];
+							if (validXY(move)) {
+								hasMove = true;
+							}
+						}
+					}
+					if (!hasMove) {
+						currentBoardMovable[row][col] = false;
+					}
+				}
+			}			
+			console.log(currentPlayer + " mut JUMP");
+			var result = updateBlog('game-blog',playerName(currentPlayer) + " must JUMP!!");
+		}
+		return haveJump;
+		// for (var row=0;row<8;row++) {
+		// 	for (var col=0;col<8;col++) {
+		// 		if (currentBoardMovable[row][col] !=='' && typeof currentAvailableMoves[row][col] !== 'undefined'){
+		// 			moves = currentAvailableMoves[row][col];
+		// 			for (var m = 0;m<currentAvailableMoves[row][col].length;m++) {
+		// 				spotB = moves[m];
+		// 				spotXY = rcXY(row,col);
+		// 				console.log('mustJumpIfAvailable',spotXY,spotB);
+		// 				if (typeof spotb !== 'undefined' && typeof spotXY !== 'undefined' && distanceBetween(spotXY,spotB)===2) {
+		// 					haveJump = true;
+		// 					canJumps.push(spotXY);
+		// 				}
+		// 			}
+		// 		}
+		// 	}
+		// }
+		// if (haveJump) {
+		// 	console.log('Jump Available');
+		// 	var result = updateBlog('game-blog','!! jump Available !!');
+
+		// 	for (row = 0;row<8;row++) {
+		// 		for (col=0;col<8;col++) {
+		// 			spotXY = rcXY(row,col);
+		// 			if (!(canJumps.indexOf(spotXY)>-1)) {
+		// 				currentBoardMovable[row][col] = false;
+		// 				currentAvailableMoves[row][col] = '';
+		// 			} else {
+		// 				moves = currentAvailableMoves[row][col];
+		// 				for (m=0;m<canJumps.length;m++) {
+		// 					if (distanceBetween(spotXY,moves[m])===1) {
+		// 						currentAvailableMoves[row][col].splice(m,1);
+		// 					}
+		// 				}
+		// 			}
+		// 		}
+		// 	}
+		// }
 	};
 
 	 var setBoardMovable = function() {
@@ -260,6 +358,9 @@ $(function() {
 	 			}
 	 		}   // end for col
 	 	}   // end for row
+	 	if (!(jumpingPieceXY)) {
+	 		mustJumpIfAvailable();
+	 	}
 	 };
 
 	 var displayBoard = function() {
@@ -273,7 +374,7 @@ $(function() {
  		// set game piece images && chk for game-spot class(movable,good-move)
 	 	for (var row = 0;row < 8;row++) {
 	 		for(var col = 0;col <8;col++) {
-	 			var spotID = xyToSpotID(row.toString() + col.toString());
+	 			var spotID = xyToSpotID(rcXY(row,col));
 	 			// console.log(row.toString() + col.toString());
 	 			switch (currentBoardPlayers[row][col]) {
 	 				case '':
@@ -342,12 +443,19 @@ $(function() {
 		for (var row=0;row<8;row++) {
 			for (var col=0;col<8;col++) {
 				if (typeof currentAvailableMoves[row][col] !== 'undefined') {
-					mCnt += currentAvailableMoves[row][col].length;
+					for (var m=0;m<currentAvailableMoves[row][col].length;m++) {
+						// if (currentAvailableMoves[row][col][m] !== '' && currentAvailableMoves[row][col][m] !=='undefined') {
+						var move = currentAvailableMoves[row][col][m];
+						if (validXY(move)) {
+							mCnt += 1;
+						}
+					}
 				}
 			}
 		}
 		console.log('You have',mCnt,'moves available');
-		var result = updateBlog('game-blog',playerName(currentPlayer)+' has '+mCnt+' moves available');
+		var s = mCnt>1 ? 's' : '';
+		var result = updateBlog('game-blog',playerName(currentPlayer)+' has '+mCnt+' move'+s+' available');
 		return mCnt;
 	};
 

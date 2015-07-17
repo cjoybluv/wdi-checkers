@@ -8,6 +8,12 @@ $(function() {
 
 	localStorage.gameState = 'page-loaded';
 
+
+   $(".draggable").draggable();
+   $('body>div').bind("dragstart", function(event, ui){
+        event.stopPropagation();
+    });
+
 	$('#accordion').accordion({
 		collapsible: true,
 		heightStyle: "fill",
@@ -551,6 +557,7 @@ $(function() {
 	    $( ".game-spot" ).droppable({
 	      drop: function( event, ui ) {
 	      	event.preventDefault();
+	      	event.stopPropagation();
 
 	      	if (gameStarted) {
 		      	// update currentBoardPlayers
